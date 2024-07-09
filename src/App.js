@@ -1,8 +1,15 @@
 
+import TopNavBar from "./components/TopNavBar";
+import Table from "./components/Table";
+import StudentCard from "./components/StudentCard";
+
 function App() {
+
   return (
     <div>
-      <h1>My App</h1>
+      <TopNavBar />
+      <Table  />
+      <StudentCard />
     </div>
 
   );
