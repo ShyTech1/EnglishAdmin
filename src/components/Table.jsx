@@ -1,10 +1,10 @@
 import React from 'react';
 import students from '../assets/StudentsData'
-import SearchBar from './components/StudentCard';
+import SearchBar from './SearchBar';
+
 
 function Table() {
 
-  
     const mapping = students.map((s) => {
         return(
 
@@ -27,8 +27,12 @@ function Table() {
     console.log(mapping)
 
     return ( 
+        <>
+            <SearchBar />
         <div dir='rtl' className="container">
-            <searchBar />
+            <h1> searchBar
+
+            </h1>
             <h1>Table</h1>
             <div className="table table-striped  table-hover" >
                 <thead>
@@ -51,6 +55,7 @@ function Table() {
                 </tbody>
             </div>
         </div>
+        </>
      );
 }
 
