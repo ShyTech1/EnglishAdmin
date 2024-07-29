@@ -165,3 +165,16 @@ insert into scores (
     (select id from teachers limit 1),
     80
 );
+
+
+-- update  students set class_id = 'f84ba710-40e3-4273-b77e-63660ee541f5';
+
+-- join creates a temporary veiw that I can later use in my app.
+-- Exporting data from the database to the app.
+-- If the output of the query is too big it is optional to write the
+-- data onto a file so the RAM would not be overload. 
+-- The second option is simplt limit the result. 
+-- for REST API use page_size() 
+
+
+-- select lname,fname, classes.class from students left join classes on class_id = classes.id;
