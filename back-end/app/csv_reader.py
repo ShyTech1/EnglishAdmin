@@ -1,18 +1,5 @@
 import csv
-from models import Classes
-
-
-def convert_class_num(s):
-    if s == "ט":
-        return '9'
-    elif s == "י":
-        return '10'
-    elif s == "יא":
-        return '11'
-    elif s == "יב":
-        return '12'
-    else:
-        return s
+from models import Classes, Students
 
 
 def csv_reader_handler():
@@ -26,32 +13,25 @@ def csv_reader_handler():
             r.append(i)
 
     classes_data = data_class_handler(r)
-    # students_data = student_data_handler(r)
+    students_data = student_data_handler(r)
 
-    return classes_data
-    # return students_data, classes_data
+    return students_data, classes_data
 
 
 def data_class_handler(rows):
     class_data_rows = {}
 
     for i in rows:
-        # Create a dictionary for each row and append it to the data list
-        # row_data = {
-        #     "class_num": i[3],
-        #     "sub_class": i[4],
-        #     "educator_name": i[5]
-        # }
-
-        class_num = convert_class_num(i[3])
-
         c = Classes(
-            class_num=class_num,
+            # class_num=class_num,
+            class_num=i[3],
             sub_class=i[4],
             educator_name=i[5]
         )
+
         # c = Classes(**row_data)
-        # key = row_data["class_num"]+row_data["sub_class"]+row_data["educator_name"] #use a dictionary to overwrite duplication
+        # key = row_data["class_num"]+row_data["sub_class"]+row_data["educator_name"]
+        # #use a dictionary to overwrite duplication
 
         key = c.class_num + c.sub_class + c.educator_name
         class_data_rows[key] = c
@@ -61,18 +41,26 @@ def data_class_handler(rows):
 def student_data_handler(rows):
     student_data_rows = []
     for i in rows:
-        class_num = convert_class_num(i[3])
         # Create a dictionary for each row and append it to the data list
-        s = Students(
-            id= i[0],
-            lname= i[1],
-            fname= i[2],
-            module_1= i[7],
-            module_2= i[8],
-            literature= i[9],
-            oral= i[10]
-        )
-        student_data_rows.append(row_data)
+        # It is a dict and not a class because it has to have the class_num and the educator name in it.
+        # in the database.add_student() it will be handled to match the correct class uuid.
+
+        s = {
+            "id": i[0],
+            "lname": i[1],
+            "fname": i[2],
+            "class_num": i[3],
+            "sub_class": i[4],
+            "educator_name": i[5],
+            "module_1": i[7],
+            "module_2": i[8],
+            "literature": i[9],
+            "oral": i[10]
+        }
+        student_data_rows.append(s)
+    # print(student_data_rows)
+    # {'id': '217669092', 'lname': 'בן שימול', 'fname': 'בנימין ציון', 'class_num': 'יא', 'sub_class': '1',
+    # 'educator_name': 'יוסי כהן', 'module_1': 'D', 'module_2': 'C', 'literature': 'E', 'oral': '4'}
     return student_data_rows
 
 

@@ -6,8 +6,11 @@ from sqlalchemy import Uuid, Boolean, Column, ForeignKey, Integer, String, TIMES
 
 Base = declarative_base()
 
-class_enum = Enum('9', '10', '11', '12', name='class_num',
-                  create_type=False)  # Enum Type: Define the custom enum type unit_enum without creating it directly in the database (create_type=False).
+class_enum = Enum('ט', 'י', 'יא', 'יב', name='class_num',
+                  create_type=False)    # Enum Type: Define the custom enum type unit_enum without creating it
+# directly in the database (create_type=False).
+
+
 sub_class_enum = Enum('1', '2', '3', '4', '5', '6', '7', name='sub_class_enum', create_type=False)
 
 
@@ -25,13 +28,6 @@ class Classes(Base):
 
     students = relationship("Students", back_populates="fk_class_id")
 
-    # def __dict__(self):
-    #     return {
-    #         "class_num": self.class_num,
-    #         "sub_class": self.sub_class,
-    #         "educator_name": self.educator_name
-    #     }
-
 
 unit_enum = Enum('3', '4', '5', name='unit_enum', create_type=False)
 
@@ -39,7 +35,7 @@ unit_enum = Enum('3', '4', '5', name='unit_enum', create_type=False)
 class Unit_groups(Base):
     __tablename__ = "unit_groups"
 
-    id = Column(Uuid, primary_key=True)
+    id = Column(Uuid, primary_key=True, server_default=text("uuid_generate_v4()"))
     teacher_name = Column(String)
     unit = Column(unit_enum)
     unit_group = Column(String)
@@ -53,16 +49,16 @@ class Students(Base):
     # deleted_at | timestamp without time zone
     # created_at | timestamp without time zone
     # updated_at | timestamp without time zone
-    id = Column("id", Integer, primary_key=True)
-    lname = Column("lname", String)
-    fname = Column("fname", String)
+    id = Column(Integer, primary_key=True)
+    lname = Column(String)
+    fname = Column(String)
     # class_id = Column("class_id", ForeignKey="classes.id")
-    class_id = Column("class_id", Uuid, ForeignKey("classes.id"))
-    unit_group_id = Column("unit_group_id", ForeignKey("unit_groups.id"))
-    # module_1 = Column("module_1", String)
-    # module_2 = Column("module_2", String)
-    # literature = Column("literature", String)
-    # oral = Column("oral", Integer)
+    class_id = Column(Uuid, ForeignKey("classes.id"))
+    unit_group_id = Column(ForeignKey("unit_groups.id"))
+    module_1 = Column(String)
+    module_2 = Column(String)
+    literature = Column(String)
+    oral = Column(Integer)
 
     fk_class_id = relationship("Classes", back_populates="students")
     fk_unit_group_id = relationship("Unit_groups", back_populates="students")

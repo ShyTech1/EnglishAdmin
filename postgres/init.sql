@@ -7,14 +7,14 @@
      set schema 'school';
 
 
-    CREATE TYPE class_enum AS ENUM ('9','10','11','12');
+    CREATE TYPE class_enum AS ENUM ('ט','י','יא','יב');
     CREATE TYPE sub_class_enum AS ENUM ('1','2','3','4','5','6','7');
 
      create table classes (
         id uuid DEFAULT gen_random_uuid(),
-        class class_enum, -- 9\10\11\12
+        class class_enum,
         sub_class sub_class_enum,
-        educator_name CHAR(255),
+        educator_name TEXT,
         PRIMARY KEY (id),
         UNIQUE (class, sub_class, educator_name)
     );
@@ -23,20 +23,24 @@
 
     create table unit_groups(
         id uuid DEFAULT gen_random_uuid(),
-        teacher_name char(255),
+        teacher_name text,
         unit unit_enum,
-        unit_group char(255),
-        room char(255),
+        unit_group text,
+        room text,
         PRIMARY KEY(id)
     );
 
 
     create table students (
         id INT,
-        lname CHAR(255),
-        fname CHAR(255),
+        lname text,
+        fname text,
         class_id uuid,
         unit_group_id uuid,
+        module_1 text,
+        module_2 text,
+        literature text,
+        oral text,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
         deleted_at TIMESTAMP DEFAULT NULL,
