@@ -2,8 +2,7 @@ import sqlalchemy
 from sqlalchemy import create_engine, MetaData, select, insert, update, and_
 from sqlalchemy.dialects.postgresql import psycopg2
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
+from models import Base
 from csv_reader import csv_reader_handler as csv_handler
 
 from app import models
@@ -16,7 +15,9 @@ CONNECTION_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgre
 SCHEMA_NAME = "school"
 
 engine = create_engine(CONNECTION_DATABASE_URL,
-                       connect_args={'options': f'-csearch_path={SCHEMA_NAME}'})
+                       connect_args={'options': f'-csearch_path={SCHEMA_NAME}'}
+                       # ,echo=True
+                       )
 
 # Create a SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -32,13 +33,6 @@ s = SessionLocal()
 # stmt = select(models.Classes)
 # result = s.execute(stmt).all()
 
-# print(select(models.Unit_groups))
-# for record in result.scalars():
-#     print({"id": record.id,
-#            "teacher_name": record.teacher_name.strip(),
-#            "unit": record.unit.strip(),
-#            "unit_group": record.unit_group.strip(),
-#            "room": record.room})
 
 students_data, classes_data = csv_handler()
 
@@ -75,9 +69,6 @@ def add_classes(data):
     # s.close()
 
 
-# add_classes(classes_data)
-
-
 def add_students(data):
     try:
         # Iterate through each record in the data
@@ -112,22 +103,23 @@ def add_students(data):
         print(f"An error occurred: {e}")
 
 
-# add_students(students_data)
 
 def add_unit_group(data):
     pass
 
 
 def print_classes():
+    class_list = []
     result = s.query(models.Classes).all()
     for record in result:
-        print({
+        class_list.append({
+
             "id": record.id,
             "class_num": record.class_num,
             "sub_class": record.sub_class,
             "educator": record.educator_name.strip()
         })
-
+    return class_list
 
 def print_students():
     result = s.query(models.Students).all()
@@ -143,5 +135,31 @@ def print_students():
             "oral": record.oral
         })
 
+# Base.metadata.create_all(engine)
 
 
+def add_module(data):
+    # s.execute(insert(models.Classes), [{k: v for k, v in vars(i).items() if k[0] != "_"} for i in (list(data))])
+    try:
+        module_ = models.Module_1(
+            student_id=data["student_id"],  # Ensure this key exists in the dictionary
+            module_name=data["module_name"]
+        )
+
+        # Add the instance to the session
+        s.add(module_)
+
+        # Commit the transaction
+        s.commit()
+        print(f"Added {data['student_id']} records successfully.")
+
+    except Exception as e:
+        # Rollback the transaction in case of an error
+        s.rollback()  # If an exception occurs, s.rollback() is called to undo any changes made during the transaction.
+        print(f"An error occurred: {e}")
+
+
+
+if __name__ == '__main__':
+    add_classes(classes_data)
+    add_students(students_data)

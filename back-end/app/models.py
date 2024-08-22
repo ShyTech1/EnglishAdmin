@@ -7,7 +7,7 @@ from sqlalchemy import Uuid, Boolean, Column, ForeignKey, Integer, String, TIMES
 Base = declarative_base()
 
 class_enum = Enum('ט', 'י', 'יא', 'יב', name='class_num',
-                  create_type=False)    # Enum Type: Define the custom enum type unit_enum without creating it
+                  create_type=False)  # Enum Type: Define the custom enum type unit_enum without creating it
 # directly in the database (create_type=False).
 
 
@@ -17,7 +17,7 @@ sub_class_enum = Enum('1', '2', '3', '4', '5', '6', '7', name='sub_class_enum', 
 class Classes(Base):
     __tablename__ = "classes"
 
-    id = Column(Uuid, primary_key=True, server_default=text("uuid_generate_v4()"))
+    id = Column(Uuid, primary_key=True, server_default=text("gen_random_uuid()"))
     class_num = Column('class', String)
     sub_class = Column(sub_class_enum)
     educator_name = Column(String)
@@ -35,7 +35,7 @@ unit_enum = Enum('3', '4', '5', name='unit_enum', create_type=False)
 class Unit_groups(Base):
     __tablename__ = "unit_groups"
 
-    id = Column(Uuid, primary_key=True, server_default=text("uuid_generate_v4()"))
+    id = Column(Uuid, primary_key=True, server_default=text("gen_random_uuid()"))
     teacher_name = Column(String)
     unit = Column(unit_enum)
     unit_group = Column(String)
@@ -52,7 +52,6 @@ class Students(Base):
     id = Column(Integer, primary_key=True)
     lname = Column(String)
     fname = Column(String)
-    # class_id = Column("class_id", ForeignKey="classes.id")
     class_id = Column(Uuid, ForeignKey("classes.id"))
     unit_group_id = Column(ForeignKey("unit_groups.id"))
     module_1 = Column(String)
@@ -62,3 +61,24 @@ class Students(Base):
 
     fk_class_id = relationship("Classes", back_populates="students")
     fk_unit_group_id = relationship("Unit_groups", back_populates="students")
+    fk_module_1 = relationship("Module_1", back_populates="students")
+
+
+class Module_1(Base):
+    __tablename__ = "module_1"
+
+    id = Column(Uuid, primary_key=True, server_default=text("gen_random_uuid()"))
+    student_id = Column(Integer, ForeignKey("students.id", name='fk_module_1'))
+    module_name = Column(String)
+    notes = Column(String)
+    season = Column(String)
+    accommodations = Column(String)
+    mock_1 = Column(Integer)
+    mock_2 = Column(Integer)
+    performance = Column(Integer)
+    attendance = Column(Integer)
+    bagrut_grade = Column(Integer)
+    annual_grade = Column(Integer)
+    final_module_grade = Column(Integer)
+
+    students = relationship("Students", back_populates="fk_module_1")

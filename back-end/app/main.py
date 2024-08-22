@@ -1,17 +1,25 @@
 import uvicorn
 from fastapi import FastAPI
+import database
+from database import add_module
 
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/classes/")
 def index():
-    return {"message": "Hello World"}
+    return database.print_classes()
 
 
 @app.get("/hello/{name}")
 async def hello(name: str, age: int):
     return {"name": name, "age": age}
+
+
+@app.post("/items/")
+async def insert_module(item: dict):
+    add_module(item)
+    return item
 
 
 if __name__ == "__main__":
