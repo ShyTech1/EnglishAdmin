@@ -29,6 +29,18 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 s = SessionLocal()
 
 
+# Dependency to get the database session. The get_db function,
+# which is used as a dependency in FastAPI,
+# is crucial for managing database sessions in a safe and efficient manner.
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 # stmt = select(models.Students).join(models.Classes)
 # stmt = select(models.Classes)
 # result = s.execute(stmt).all()
@@ -103,7 +115,6 @@ def add_students(data):
         print(f"An error occurred: {e}")
 
 
-
 def add_unit_group(data):
     pass
 
@@ -121,6 +132,7 @@ def print_classes():
         })
     return class_list
 
+
 def print_students():
     result = s.query(models.Students).all()
     for record in result:
@@ -134,6 +146,7 @@ def print_students():
             "literature": record.literature,
             "oral": record.oral
         })
+
 
 # Base.metadata.create_all(engine)
 
@@ -157,7 +170,6 @@ def add_module(data):
         # Rollback the transaction in case of an error
         s.rollback()  # If an exception occurs, s.rollback() is called to undo any changes made during the transaction.
         print(f"An error occurred: {e}")
-
 
 
 if __name__ == '__main__':
