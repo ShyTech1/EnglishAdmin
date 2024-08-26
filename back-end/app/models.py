@@ -67,6 +67,7 @@ class Students(Base):
 class Module_1(Base):
     __tablename__ = "module_1"
 
+
     id = Column(Uuid, primary_key=True, server_default=text("gen_random_uuid()"))
     student_id = Column(Integer, ForeignKey("students.id", name='fk_module_1'))
     module_name = Column(String)
